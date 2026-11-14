@@ -1,0 +1,98 @@
+### Roteiro para testar a API no IntelliJ IDEA (HTTP Client) ou no VS Code (extensão REST Client).
+### Rode as requisições de cima para baixo. A API precisa estar no ar em http://localhost:8080.
+
+@host = http://localhost:8080
+
+### 1) A API está no ar?
+GET {{host}}/api/saude
+
+### 2) Cadastro (cria a conta + o abrigo e já devolve o token)
+POST {{host}}/api/auth/cadastro
+Content-Type: application/json
+
+{
+  "nome": "Helena Souza",
+  "email": "helena@exemplo.com",
+  "telefone": "(11) 98123-1236",
+  "senha": "senha12345"
+}
+
+### 3) Login (guarda o token na variável "token")
+# @name login
+POST {{host}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "helena@exemplo.com",
+  "senha": "senha12345"
+}
+
+###
+@token = {{login.response.body.$.token}}
+
+### 4) Quem sou eu?
+GET {{host}}/api/auth/eu
+Authorization: Bearer {{token}}
+
+### 5) Informações do abrigo
+GET {{host}}/api/abrigo
+Authorization: Bearer {{token}}
+
+### 6) Editar o abrigo
+PUT {{host}}/api/abrigo
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nome": "Refúgio dos Peludos",
+  "descricao": "Abrigo que resgata e cuida de bichinhos até encontrarem um lar.",
+  "endereco": "Rua Doutor Rodrigo Alves, 721, SP",
+  "telefone": "(11) 98123-1236",
+  "email": "refugio.peludo@gmail.com",
+  "capacidade": 60
+}
+
+### 7) Convidar um membro (a resposta traz o "conviteToken")
+# @name convite
+POST {{host}}/api/equipe
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nome": "Max",
+  "sobrenome": "Arthur",
+  "email": "max@exemplo.com",
+  "telefone": "(11) 98345-2134",
+  "endereco": "Rua Firmino Ladeira, 289",
+  "cargo": "VOLUNTARIO"
+}
+
+###
+@conviteToken = {{convite.response.body.$.conviteToken}}
+@membroId = {{convite.response.body.$.membro.id}}
+
+### 8) O convidado define a senha e entra
+POST {{host}}/api/auth/aceitar-convite
+Content-Type: application/json
+
+{
+  "token": "{{conviteToken}}",
+  "senha": "outrasenha123"
+}
+
+### 9) Listar a equipe
+GET {{host}}/api/equipe
+Authorization: Bearer {{token}}
+
+### 10) Mudar o cargo do membro (as permissões passam para as do novo cargo)
+PUT {{host}}/api/equipe/{{membroId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "cargo": "CUIDADOR"
+}
+
+### 11) Remover o membro
+DELETE {{host}}/api/equipe/{{membroId}}
+Authorization: Bearer {{token}}

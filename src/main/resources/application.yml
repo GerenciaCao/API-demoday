@@ -1,0 +1,36 @@
+# Configuração da API do GerenciaCão.
+# Os segredos vêm de VARIÁVEIS DE AMBIENTE (nunca escreva a senha do banco aqui):
+#   MONGODB_URI  -> string de conexão do MongoDB Atlas (inclua o nome do banco, ex.: .../gerenciacao?retryWrites=true&w=majority)
+#   JWT_SEGREDO  -> texto aleatório com pelo menos 32 caracteres (assina os tokens de login)
+
+server:
+  port: 8080
+  error:                       # nunca devolver mensagens internas nem stack trace ao cliente
+    include-message: never
+    include-stacktrace: never
+    include-binding-errors: never
+    include-exception: false
+  # Atrás de um proxy/HTTPS na nuvem, troque por "framework" para o IP real do cliente (limite de tentativas)
+  forward-headers-strategy: none
+
+spring:
+  application:
+    name: gerenciacao-api
+  # O Spring Boot 4 usa "spring.mongodb.*"; o 3.x usava "spring.data.mongodb.*". Os dois estão preenchidos de propósito.
+  mongodb:
+    uri: ${MONGODB_URI:mongodb://localhost:27017/gerenciacao}
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://localhost:27017/gerenciacao}
+      auto-index-creation: true   # cria os índices únicos (ex.: e-mail) ao iniciar
+  servlet:
+    multipart:          # fotos guardadas no banco: até 2 MB cada
+      max-file-size: 2MB
+      max-request-size: 3MB
+  jackson:
+    default-property-inclusion: non_null   # não envia campos nulos no JSON
+
+gerenciacao:
+  jwt:
+    segredo: ${JWT_SEGREDO}        # sem valor padrão: a API não sobe sem ele
+    expiracao-horas: 12
