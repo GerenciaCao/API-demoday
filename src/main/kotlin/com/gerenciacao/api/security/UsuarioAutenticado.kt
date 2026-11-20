@@ -14,6 +14,9 @@ data class UsuarioAutenticado(
     val cargo: Cargo,
     val permissoes: Set<Permissao>,
 ) {
+    /** Diz se o usuário tem a permissão (sem lançar erro). */
+    fun pode(permissao: Permissao): Boolean = permissao in permissoes
+
     /** Garante que o usuário tem a permissão; senão responde 403. */
     fun exigir(permissao: Permissao) {
         if (permissao !in permissoes) throw AcessoNegadoException()

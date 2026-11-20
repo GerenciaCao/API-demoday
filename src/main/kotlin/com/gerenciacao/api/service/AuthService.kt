@@ -118,6 +118,15 @@ class AuthService(
         return respostaDeLogin(ativado)
     }
 
+    /** Troca a senha do usuário logado (RF03). Os tokens antigos deixam de valer e devolve um novo, para o app continuar logado. */
+    fun alterarSenha(id: String, senhaAtual: String, novaSenha: String): AuthResponse {
+        if (!limitador.registrar("senha|$id", 5, Duration.ofMinutes(15))) throw MuitasTentativasException()
+        val usuario = usuarios.findById(id).orElse(null) ?: throw NaoEncontradoException("Usuário não encontrado.")
+        if (!encoder.matches(senhaAtual, usuario.senhaHash ?: hashFalso)) throw RegraNegocioException("A senha atual está incorreta.")
+        val salvo = usuarios.save(usuario.copy(senhaHash = encoder.encode(novaSenha), senhaAlteradaEm = Instant.now()))
+        return respostaDeLogin(salvo)
+    }
+
     /** Devolve os dados do usuário logado (tela de perfil / "Minha Conta"). */
     fun eu(id: String): UsuarioDto =
         usuarios.findById(id).orElse(null)?.paraDto() ?: throw NaoEncontradoException("Usuário não encontrado.")

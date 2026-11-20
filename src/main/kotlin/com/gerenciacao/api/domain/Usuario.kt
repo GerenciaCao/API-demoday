@@ -30,6 +30,8 @@ data class Usuario(
     val status: StatusUsuario = StatusUsuario.ATIVO,
     val emailVerificado: Boolean = false,
     val passouPeloOnboard: Boolean = false,
+    /** Quando a senha mudou pela última vez: tokens de login emitidos antes disso deixam de valer. */
+    val senhaAlteradaEm: Instant? = null,
     /** Hash (SHA-256) do token de convite; o token em si só é mostrado uma vez a quem convidou. */
     @Indexed val conviteTokenHash: String? = null,
     val conviteExpiraEm: Instant? = null,

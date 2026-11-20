@@ -46,3 +46,41 @@ interface FotoMetaRepository : org.springframework.data.repository.Repository<co
     @org.springframework.data.mongodb.repository.Query(value = "{ 'donoTipo': ?0, 'donoId': ?1 }", fields = "{ 'dados': 0 }")
     fun listar(donoTipo: String, donoId: String): List<com.gerenciacao.api.domain.FotoMeta>
 }
+
+// ---------------------------------------------------------------- Repositórios dos módulos
+
+interface AnimalRepository : MongoRepository<com.gerenciacao.api.domain.Animal, String>
+
+interface VacinaRepository : MongoRepository<com.gerenciacao.api.domain.Vacina, String> {
+    fun findByAnimalIdOrderByDataDesc(animalId: String): List<com.gerenciacao.api.domain.Vacina>
+    fun deleteByAnimalId(animalId: String): Long
+}
+
+interface HistoricoRepository : MongoRepository<com.gerenciacao.api.domain.HistoricoMedico, String> {
+    fun findByAnimalIdOrderByDataConsultaDesc(animalId: String): List<com.gerenciacao.api.domain.HistoricoMedico>
+    fun deleteByAnimalId(animalId: String): Long
+}
+
+interface DespesaRepository : MongoRepository<com.gerenciacao.api.domain.Despesa, String>
+
+interface DoacaoRepository : MongoRepository<com.gerenciacao.api.domain.Doacao, String>
+
+interface EstoqueRepository : MongoRepository<com.gerenciacao.api.domain.ItemEstoque, String> {
+    fun findByAbrigoIdOrderByItem(abrigoId: String): List<com.gerenciacao.api.domain.ItemEstoque>
+}
+
+interface EventoRepository : MongoRepository<com.gerenciacao.api.domain.Evento, String>
+
+interface AdocaoRepository : MongoRepository<com.gerenciacao.api.domain.Adocao, String> {
+    fun deleteByAnimalId(animalId: String): Long
+}
+
+interface ParceriaRepository : MongoRepository<com.gerenciacao.api.domain.Parceria, String>
+
+interface ConexaoRepository : MongoRepository<com.gerenciacao.api.domain.Conexao, String> {
+    fun findByAbrigoAIdOrAbrigoBId(a: String, b: String): List<com.gerenciacao.api.domain.Conexao>
+}
+
+interface TokenRepository : MongoRepository<com.gerenciacao.api.domain.TokenVerificacao, String> {
+    fun findByTokenHash(hash: String): com.gerenciacao.api.domain.TokenVerificacao?
+}

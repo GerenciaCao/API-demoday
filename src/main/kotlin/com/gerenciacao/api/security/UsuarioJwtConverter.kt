@@ -23,6 +23,9 @@ class UsuarioJwtConverter(private val usuarios: UsuarioRepository) : Converter<J
         val usuario = usuarios.findById(id).orElse(null)
             ?: throw InvalidBearerTokenException("Usuário não encontrado.")
         if (usuario.status != StatusUsuario.ATIVO) throw InvalidBearerTokenException("Conta inativa.")
+        val trocouSenha = usuario.senhaAlteradaEm?.truncatedTo(java.time.temporal.ChronoUnit.SECONDS)
+        val emitidoEm = jwt.issuedAt
+        if (trocouSenha != null && (emitidoEm == null || emitidoEm.isBefore(trocouSenha))) throw InvalidBearerTokenException("Sessão antiga: a senha foi alterada.")
 
         val principal = UsuarioAutenticado(
             id = id,

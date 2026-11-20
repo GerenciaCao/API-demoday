@@ -33,6 +33,9 @@ class SecurityConfig {
                     "/api/auth/cadastro",
                     "/api/auth/login",
                     "/api/auth/aceitar-convite",
+                    "/api/auth/esqueci-senha",
+                    "/api/auth/redefinir-senha",
+                    "/api/auth/validar-email",
                 ).permitAll()
                     .anyRequest().authenticated()
             }

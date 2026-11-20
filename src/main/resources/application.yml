@@ -31,6 +31,8 @@ spring:
     default-property-inclusion: non_null   # não envia campos nulos no JSON
 
 gerenciacao:
+  plataforma:
+    admins: ${PLATAFORMA_ADMINS:}   # e-mails (separados por vírgula) que gerenciam os anúncios de Parcerias
   jwt:
     segredo: ${JWT_SEGREDO}        # sem valor padrão: a API não sobe sem ele
     expiracao-horas: 12

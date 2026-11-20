@@ -69,8 +69,9 @@ class FotoService(
 
     /** Devolve a foto com os bytes, se o usuário pode ver. De outro abrigo = 404. */
     fun baixar(eu: UsuarioAutenticado, id: String): Foto {
-        val foto = fotos.findById(id).orElse(null)?.takeIf { it.abrigoId == eu.abrigoId }
-            ?: throw NaoEncontradoException("Foto não encontrada.")
+        val foto = fotos.findById(id).orElse(null) ?: throw NaoEncontradoException("Foto não encontrada.")
+        if (foto.donoTipo == DonoFoto.ABRIGO) return foto // a foto de perfil de um abrigo é pública para quem está logado (tela Conexão)
+        if (foto.abrigoId != eu.abrigoId) throw NaoEncontradoException("Foto não encontrada.")
         exigirAcesso(eu, foto.donoTipo, foto.donoId, escrita = false)
         return foto
     }
