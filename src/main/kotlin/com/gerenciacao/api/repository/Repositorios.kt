@@ -1,0 +1,86 @@
+package com.gerenciacao.api.repository
+
+import com.gerenciacao.api.domain.Abrigo
+import com.gerenciacao.api.domain.Usuario
+import org.springframework.data.mongodb.repository.MongoRepository
+
+/** Acesso à coleção "usuarios". O Spring Data cria as consultas a partir dos nomes dos métodos. */
+interface UsuarioRepository : MongoRepository<Usuario, String> {
+    /** Busca pelo e-mail (já em minúsculas). */
+    fun findByEmail(email: String): Usuario?
+
+    /** Diz se já existe conta com esse e-mail. */
+    fun existsByEmail(email: String): Boolean
+
+    /** Lista a equipe de um abrigo. */
+    fun findByAbrigoId(abrigoId: String): List<Usuario>
+
+    /** Encontra o usuário a partir do hash do token de convite. */
+    fun findByConviteTokenHash(hash: String): Usuario?
+}
+
+/** Acesso à coleção "abrigos". */
+interface AbrigoRepository : MongoRepository<Abrigo, String>
+
+/** Só leitura: contagem e consulta de animais (visão mínima). Estende Repository (e não MongoRepository) de propósito: sem save/delete. */
+interface AnimalRefRepository : org.springframework.data.repository.Repository<com.gerenciacao.api.domain.AnimalRef, String> {
+    /** Quantos animais do abrigo estão ativos (ocupam vaga). */
+    fun countByAbrigoIdAndAtivo(abrigoId: String, ativo: Boolean): Long
+
+    /** Busca um animal pelo id (visão mínima). */
+    fun findById(id: String): com.gerenciacao.api.domain.AnimalRef?
+}
+
+/** Fotos com os bytes (para enviar, baixar e apagar). */
+interface FotoRepository : MongoRepository<com.gerenciacao.api.domain.Foto, String> {
+    /** Quantas fotos o dono tem. */
+    fun countByDonoTipoAndDonoId(donoTipo: com.gerenciacao.api.domain.DonoFoto, donoId: String): Long
+
+    /** Apaga as fotos do dono (usado para substituir a foto única de usuário/abrigo). */
+    fun deleteByDonoTipoAndDonoId(donoTipo: com.gerenciacao.api.domain.DonoFoto, donoId: String): Long
+}
+
+/** Lista de fotos SEM os bytes (o campo "dados" é excluído da consulta). */
+interface FotoMetaRepository : org.springframework.data.repository.Repository<com.gerenciacao.api.domain.FotoMeta, String> {
+    /** Fotos de um dono, sem a imagem. */
+    @org.springframework.data.mongodb.repository.Query(value = "{ 'donoTipo': ?0, 'donoId': ?1 }", fields = "{ 'dados': 0 }")
+    fun listar(donoTipo: String, donoId: String): List<com.gerenciacao.api.domain.FotoMeta>
+}
+
+// ---------------------------------------------------------------- Repositórios dos módulos
+
+interface AnimalRepository : MongoRepository<com.gerenciacao.api.domain.Animal, String>
+
+interface VacinaRepository : MongoRepository<com.gerenciacao.api.domain.Vacina, String> {
+    fun findByAnimalIdOrderByDataDesc(animalId: String): List<com.gerenciacao.api.domain.Vacina>
+    fun deleteByAnimalId(animalId: String): Long
+}
+
+interface HistoricoRepository : MongoRepository<com.gerenciacao.api.domain.HistoricoMedico, String> {
+    fun findByAnimalIdOrderByDataConsultaDesc(animalId: String): List<com.gerenciacao.api.domain.HistoricoMedico>
+    fun deleteByAnimalId(animalId: String): Long
+}
+
+interface DespesaRepository : MongoRepository<com.gerenciacao.api.domain.Despesa, String>
+
+interface DoacaoRepository : MongoRepository<com.gerenciacao.api.domain.Doacao, String>
+
+interface EstoqueRepository : MongoRepository<com.gerenciacao.api.domain.ItemEstoque, String> {
+    fun findByAbrigoIdOrderByItem(abrigoId: String): List<com.gerenciacao.api.domain.ItemEstoque>
+}
+
+interface EventoRepository : MongoRepository<com.gerenciacao.api.domain.Evento, String>
+
+interface AdocaoRepository : MongoRepository<com.gerenciacao.api.domain.Adocao, String> {
+    fun deleteByAnimalId(animalId: String): Long
+}
+
+interface ParceriaRepository : MongoRepository<com.gerenciacao.api.domain.Parceria, String>
+
+interface ConexaoRepository : MongoRepository<com.gerenciacao.api.domain.Conexao, String> {
+    fun findByAbrigoAIdOrAbrigoBId(a: String, b: String): List<com.gerenciacao.api.domain.Conexao>
+}
+
+interface TokenRepository : MongoRepository<com.gerenciacao.api.domain.TokenVerificacao, String> {
+    fun findByTokenHash(hash: String): com.gerenciacao.api.domain.TokenVerificacao?
+}

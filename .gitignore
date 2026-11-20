@@ -1,0 +1,8 @@
+.gradle/
+build/
+.idea/
+*.iml
+out/
+# Segredos: nunca versionar
+.env
+application-local.yml
