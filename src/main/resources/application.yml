@@ -11,7 +11,7 @@ server:
     include-binding-errors: never
     include-exception: false
   # Atrás de um proxy/HTTPS na nuvem, troque por "framework" para o IP real do cliente (limite de tentativas)
-  forward-headers-strategy: none
+  forward-headers-strategy: framework
 
 spring:
   application:
