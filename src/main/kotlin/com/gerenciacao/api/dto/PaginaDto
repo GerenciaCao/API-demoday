@@ -1,0 +1,20 @@
+package com.gerenciacao.api.dto
+
+import org.springframework.data.domain.Page
+
+data class PaginaDto<T>(
+    val itens: List<T>,
+    val paginaAtual: Int,
+    val tamanhoPagina: Int,
+    val totalItens: Long,
+    val totalPaginas: Int,
+)
+
+//Paginação
+fun <T : Any> Page<T>.paraPaginaDto(): PaginaDto<T> = PaginaDto(
+    itens = this.content,
+    paginaAtual = this.number,
+    tamanhoPagina = this.size,
+    totalItens = this.totalElements,
+    totalPaginas = this.totalPages,
+)
