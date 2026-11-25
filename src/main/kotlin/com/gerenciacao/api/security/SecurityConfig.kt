@@ -36,8 +36,8 @@ class SecurityConfig {
                     "/api/auth/esqueci-senha",
                     "/api/auth/redefinir-senha",
                     "/api/auth/validar-email",
-                ).permitAll()
-                    .anyRequest().authenticated()
+                ).permitAll().requestMatchers(org.springframework.http.HttpMethod.GET, "/api/abrigo", "/api/abrigo/{id}").permitAll()
+        .anyRequest().authenticated()
             }
             .exceptionHandling {
                 it.authenticationEntryPoint(NaoAutenticadoJson()).accessDeniedHandler(AcessoNegadoJson())
