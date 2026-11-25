@@ -28,13 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
-/** Rota pública para o app testar se a API está no ar. */
-@RestController
-class SaudeController {
-    /** GET /api/saude -> {"status":"ok"} */
-    @GetMapping("/api/saude")
-    fun saude(): Map<String, String> = mapOf("status" to "ok")
-}
+
 
 /** Cadastro, login, aceite de convite e "quem sou eu". */
 @RestController
@@ -106,6 +100,9 @@ class AbrigoController(private val abrigo: AbrigoService) {
 
     /** GET /api/abrigo — dados do abrigo. */
     @GetMapping
+    fun buscar(@AuthenticationPrincipal eu: UsuarioAutenticado): AbrigoDto = abrigo.buscar(eu)
+
+    @GetMapping("/{id}")
     fun buscar(@AuthenticationPrincipal eu: UsuarioAutenticado): AbrigoDto = abrigo.buscar(eu)
 
     /** PUT /api/abrigo — edita o abrigo (administrador ou gestor). */
