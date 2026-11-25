@@ -27,18 +27,24 @@ class SecurityConfig {
         http
             .csrf { it.disable() } // API com token no cabeçalho, sem cookies: CSRF não se aplica
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
-            .authorizeHttpRequests {
-                it.requestMatchers(
-                    "/api/saude",
-                    "/api/auth/cadastro",
-                    "/api/auth/login",
-                    "/api/auth/aceitar-convite",
-                    "/api/auth/esqueci-senha",
-                    "/api/auth/redefinir-senha",
-                    "/api/auth/validar-email",
-                ).permitAll().requestMatchers(org.springframework.http.HttpMethod.GET, "/api/abrigo", "/api/abrigo/{id}").permitAll()
+.authorizeHttpRequests {
+    it.requestMatchers(
+        "/api/saude",
+        "/api/auth/cadastro",
+        "/api/auth/login",
+        "/api/auth/aceitar-convite",
+        "/api/auth/esqueci-senha",
+        "/api/auth/redefinir-senha",
+        "/api/auth/validar-email",
+    ).permitAll()
+        .requestMatchers(
+            org.springframework.http.HttpMethod.GET,
+            "/api/abrigo",
+            "/api/abrigo/",
+            "/api/abrigo/{id}",
+        ).permitAll()
         .anyRequest().authenticated()
-            }
+}
             .exceptionHandling {
                 it.authenticationEntryPoint(NaoAutenticadoJson()).accessDeniedHandler(AcessoNegadoJson())
             }
