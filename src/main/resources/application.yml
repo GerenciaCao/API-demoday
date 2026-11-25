@@ -18,10 +18,10 @@ spring:
     name: gerenciacao-api
   # O Spring Boot 4 usa "spring.mongodb.*"; o 3.x usava "spring.data.mongodb.*". Os dois estão preenchidos de propósito.
   mongodb:
-    uri: ${MONGODB_URI:mongodb://localhost:27017/gerenciacao}
+    uri: ${MONGODB_URI:mongodb://localhost:27017/GerenciaCaoDB}
   data:
     mongodb:
-      uri: ${MONGODB_URI:mongodb://localhost:27017/gerenciacao}
+      uri: ${MONGODB_URI:mongodb://localhost:27017/GerenciaCaoDB}
       auto-index-creation: true   # cria os índices únicos (ex.: e-mail) ao iniciar
   servlet:
     multipart:          # fotos guardadas no banco: até 2 MB cada
